@@ -1,0 +1,40 @@
+{
+  "name": "acarolinafg/pagseguro",
+  "description": "Biblioteca de integração do Laravel com o getaway de pagamento PagSeguro",
+  "keywords": [
+    "laravel",
+    "laravel-packages",
+    "laravel-pagaseguro",
+    "pagseguro",
+    "pagseguro-php",
+    "gateway",
+    "gateway-pagamento",
+    "gateway-pagseguro"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ana Carolina Fidelis Gonçalves",
+      "email": "acarolinafg@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.2",
+    "illuminate/support": "5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Acarolinafg\\PagSeguro\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Acarolinafg\\PagaSeguro\\PagSeguroServiceProvider"
+      ]
+    }
+  }
+}
