@@ -1,11 +1,11 @@
 <?php
-if (!function_exists('str_parameters')) {
+if (!function_exists('pagseguro_str_parameters')) {
   /**
    * Transforma o array de parâmentro em uma string para envio da requisição
    * @param array $parameters
    * @return string
    */
-  function str_parameters(array $parameters)
+  function pagseguro_str_parameters(array $parameters)
   {
     $data = '';
     foreach ($parameters as $key => $value)
