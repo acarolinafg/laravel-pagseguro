@@ -19,6 +19,9 @@ class PagSeguroServiceProvider extends ServiceProvider
 
   public function register()
   {
+    //carregar os helpers do pacote
+    require_once(__DIR__ . '/helpers/functions.php');
+
     //fornecer o serviço de pagamento pelo Checkout Transparente para app
     $this->app->bind('pagSeguroCheckoutTransparente', function ($app) {
       return new PagSeguroCheckoutTransparente($app['log'], $app['validator']);
