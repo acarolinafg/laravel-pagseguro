@@ -115,6 +115,7 @@ class PagSeguroConfiguracoes
       'transaction.cancel'        => "{$baseURLv2}/transactions/cancels/",
       'transaction.refunds'       => "{$baseURLv2}/transactions/refunds/",
       'transaction.notification'  => "{$baseURLv2}/transactions/notifications/",
+      'transaction.sandbox'       => "https://sandbox.api.pagseguro.com//digital-payments/v1/transactions/:transactionCode/status"
     ];
   }
 }
