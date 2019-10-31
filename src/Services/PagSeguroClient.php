@@ -3,10 +3,10 @@
 namespace Acarolinafg\PagSeguro\Services;
 
 /**
- * Classe de Checkout Transparente do PagSeguro
+ * Classe de conexão com a API PagSeguro
  * @author Ana Carolina Fidelis Gonçalves <acarolinafg@gmail.com>
  */
-class PagSeguroCheckoutTransparente extends PagSeguroClient
+class PagSeguroClient extends PagSeguroConfiguracoes
 {
 
 }

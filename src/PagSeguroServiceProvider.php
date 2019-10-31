@@ -20,8 +20,8 @@ class PagSeguroServiceProvider extends ServiceProvider
   public function register()
   {
     //fornecer o serviço de pagamento pelo Checkout Transparente para app
-    $this->app->bind('pagSeguroCheckoutTransparente', function () {
-      return new PagSeguroCheckoutTransparente;
+    $this->app->bind('pagSeguroCheckoutTransparente', function ($app) {
+      return new PagSeguroCheckoutTransparente($app['log'], $app['validator']);
     });
   }
 
