@@ -1,9 +1,7 @@
 <?php
-Route::group([
-  'namespace' => 'Acarolinafg\PagSeguro\Http\Controllers',
-  'middleware' => ['web']
-], function () {
-  Route::get('/pagseguro', function () {
-    return 'Hello World pagseguro WEB!';
-  });
+Route::prefix('pagseguro')->middleware('web')->name('api.pagseguro.')
+->namespace('Acarolinafg\PagSeguro\Http\Controllers')->group(function () {
+  Route::get('session', 'PagSeguroCheckoutTransparenteController@session')->name('session');
+  Route::get('javascript', 'PagSeguroCheckoutTransparenteController@javascript')->name('javascript');
+  Route::get('javascript-content', 'PagSeguroCheckoutTransparenteController@javaScriptContent')->name('javaScriptContent');
 });

@@ -109,7 +109,7 @@ class PagSeguroConfiguracoes
     $baseURLv2 = "{$baseURL}/v2";
 
     $this->URLs = [
-      'checkout.js'               => "{$baseURLv2}/checkout/pagseguro.directpayment.js",
+      'checkout.javascript'       => "{$baseURLv2}/checkout/pagseguro.directpayment.js",
       'checkout.session'          => "{$baseURLv2}/checkout/sessions",
       'transaction'               => "{$baseURLv2}/transactions/",
       'transaction.cancel'        => "{$baseURLv2}/transactions/cancels/",
