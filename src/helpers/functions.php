@@ -14,3 +14,14 @@ if (!function_exists('pagseguro_str_parameters')) {
     return rtrim($data, '&');
   }
 }
+
+if (!function_exists('pagseguro_format_money')) {
+  /**
+   * Formata um valor deixando no padrão de moeda
+   * @param mixed $value
+   */
+  function pagseguro_format_money($value)
+  {
+    return number_format($value, 2, '.', '');
+  }
+}
