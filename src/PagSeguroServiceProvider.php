@@ -2,6 +2,7 @@
 
 namespace Acarolinafg\PagSeguro;
 
+use Acarolinafg\PagSeguro\Services\PagSeguroCheckoutTransparente;
 use Illuminate\Support\ServiceProvider;
 
 class PagSeguroServiceProvider extends ServiceProvider
@@ -12,12 +13,17 @@ class PagSeguroServiceProvider extends ServiceProvider
     $this->publishConfig();
 
     //carregar as rotas web e api
-    $this->loadRoutesFrom(__DIR__.'/routes/web.php');
-    $this->loadRoutesFrom(__DIR__.'/routes/api.php');
+    $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+    $this->loadRoutesFrom(__DIR__ . '/routes/api.php');
   }
 
   public function register()
-  { }
+  {
+    //fornecer o serviço de pagamento pelo Checkout Transparente para app
+    $this->app->bind('pagSeguroCheckoutTransparente', function () {
+      return new PagSeguroCheckoutTransparente;
+    });
+  }
 
   /**
    * Publicação do arquivo de configuração

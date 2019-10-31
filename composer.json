@@ -34,7 +34,10 @@
     "laravel": {
       "providers": [
         "Acarolinafg\\PagaSeguro\\PagSeguroServiceProvider"
-      ]
+      ],
+      "aliases": {
+        "PagSeguro": "Acarolinafg\\PagSeguro\\PagSeguroCheckoutTransparenteFacede"
+      }
     }
   }
 }
