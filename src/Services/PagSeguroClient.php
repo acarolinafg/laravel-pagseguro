@@ -26,7 +26,7 @@ class PagSeguroClient extends PagSeguroConfiguracoes
 
   /**
    * Parâmetros das requisições
-   * @var  array
+   * @var  string
    */
   protected $parameters = null;
 
@@ -34,7 +34,7 @@ class PagSeguroClient extends PagSeguroConfiguracoes
    * URL da requisição
    * @var string
    */
-  protected $url;
+  protected $url = null;
 
   /**
    * Resultado da requisição
