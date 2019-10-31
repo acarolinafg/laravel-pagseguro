@@ -8,5 +8,22 @@ namespace Acarolinafg\PagSeguro\Services;
  */
 class PagSeguroCheckoutTransparente extends PagSeguroClient
 {
+  /**
+   * Inicia uma sessão para o Checkout
+   * @return string
+   */
+  public function startSession()
+  {
+    //definição dos parâmetros
+    $param = ['email' => $this->email, 'token' => $this->token];
+    $this->parameters = pagseguro_str_parameters($param);
 
+    //definição da URL
+    $this->url = $this->getUrl('checkout.session');
+
+    //enviar requisição
+    $this->sendRequest();
+
+    return (string) $this->result->id;
+  }
 }
