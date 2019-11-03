@@ -2,10 +2,9 @@
 Route::group([
   'namespace' => 'Acarolinafg\PagSeguro\Http\Controllers',
   'middleware' => ['auth:api'],
-  'name' => 'api.v2.pagseguro',
-  'prefix'=>'pagseguro/api/v2'
+  'prefix'=>'api/v2/pagseguro'
 ], function () {
-  Route::get('session', 'PagSeguroCheckoutTransparenteController@session')->name('session');
-  Route::get('javascript', 'PagSeguroCheckoutTransparenteController@javascript')->name('javascript');
-  Route::get('javascript-content', 'PagSeguroCheckoutTransparenteController@javaScriptContent')->name('javaScriptContent');
+  Route::get('session', 'PagSeguroCheckoutTransparenteController@session')->name('api.v2.pagseguro.session');
+  Route::get('javascript', 'PagSeguroCheckoutTransparenteController@javascript')->name('api.v2.pagseguro.javascript');
+  Route::get('javascript-content', 'PagSeguroCheckoutTransparenteController@javaScriptContent')->name('api.v2.pagseguro.javaScriptContent');
 });

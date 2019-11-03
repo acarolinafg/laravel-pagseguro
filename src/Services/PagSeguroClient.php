@@ -43,6 +43,26 @@ class PagSeguroClient extends PagSeguroConfiguracoes
   protected $result;
 
   /**
+   * Inicia uma sessão para realização de transações
+   * @return string
+   */
+  public function startSession()
+  {
+    //definição dos parâmetros
+    $param = ['email' => $this->email, 'token' => $this->token];
+    $this->parameters = pagseguro_str_parameters($param);
+
+    //definição da URL
+    $this->url = $this->getUrl('session');
+
+    //enviar requisição
+    $this->sendRequest();
+
+    return (string) $this->result->id;
+  }
+
+
+  /**
    * Envia uma requisição para o PagSeguro
    *
    * @throws Acarolinafg\PagSeguro\PagSeguroException
