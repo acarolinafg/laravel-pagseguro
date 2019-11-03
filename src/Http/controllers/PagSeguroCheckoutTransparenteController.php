@@ -35,7 +35,7 @@ class PagSeguroCheckoutTransparenteController extends Controller
    */
   public function javaScript()
   {
-    return PagSeguro::getUrl('checkout.javascript');
+    return $this->pagseguro->getUrl('checkout.javascript');
   }
 
   /**
