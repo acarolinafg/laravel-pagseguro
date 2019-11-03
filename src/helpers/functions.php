@@ -19,9 +19,34 @@ if (!function_exists('pagseguro_format_money')) {
   /**
    * Formata um valor deixando no padrão de moeda
    * @param mixed $value
+   * @return null|number
    */
   function pagseguro_format_money($value)
   {
-    return number_format($value, 2, '.', '');
+    return $value == null ? null : number_format($value, 2, '.', '');
+  }
+}
+
+if (!function_exists('pagseguro_clear_value')) {
+  /**
+   * Limpa um valor removendo espaços duplos
+   * @param mixed $value
+   *  @return null|mixed
+   */
+  function pagseguro_clear_value($value, $regex = '/\s+/', $replace = ' ')
+  {
+    return $value == null ? null : utf8_decode(trim(preg_replace($regex, $replace, $value)));
+  }
+}
+
+if (!function_exists('pagseguro_clear_number')) {
+  /**
+   * Limpa um valor deixando apenas números
+   * @param mixed $value
+   * @return null|mixed
+   */
+  function pagseguro_clear_number($value)
+  {
+   return pagseguro_clear_value($value,'/\D/', '');
   }
 }
