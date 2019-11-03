@@ -104,18 +104,16 @@ class PagSeguroConfiguracoes
   {
     $sandbox = $this->sandbox ? 'sandbox.' : '';
 
-    $baseURL = "https://ws.{$sandbox}.pagseguro.uol.com.br";
-
-    $baseURLv2 = "{$baseURL}/v2";
+    $baseURL = "https://ws.{$sandbox}pagseguro.uol.com.br/v2";
 
     $this->URLs = [
-      'checkout.javascript'       => "{$baseURLv2}/checkout/pagseguro.directpayment.js",
-      'checkout.session'          => "{$baseURLv2}/checkout/sessions",
-      'transaction'               => "{$baseURLv2}/transactions/",
-      'transaction.cancel'        => "{$baseURLv2}/transactions/cancels/",
-      'transaction.refunds'       => "{$baseURLv2}/transactions/refunds/",
-      'transaction.notification'  => "{$baseURLv2}/transactions/notifications/",
-      'transaction.sandbox'       => "https://sandbox.api.pagseguro.com//digital-payments/v1/transactions/:transactionCode/status"
+      'checkout.javascript'       => "https://stc.{$sandbox}pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js",
+      'checkout.session'          => "{$baseURL}/checkout/sessions",
+      'transaction'               => "{$baseURL}/transactions/",
+      'transaction.cancel'        => "{$baseURL}/transactions/cancels/",
+      'transaction.refunds'       => "{$baseURL}/transactions/refunds/",
+      'transaction.notification'  => "{$baseURL}/transactions/notifications/",
+      'transaction.sandbox'       => "https://sandbox.api.pagseguro.com/digital-payments/v1/transactions/:transactionCode/status"
     ];
   }
 }
