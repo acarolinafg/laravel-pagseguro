@@ -104,15 +104,15 @@ class PagSeguroConfiguracoes
   {
     $sandbox = $this->sandbox ? 'sandbox.' : '';
 
-    $baseURL = "https://ws.{$sandbox}pagseguro.uol.com.br/v2";
+    $baseURL = "https://ws.{$sandbox}pagseguro.uol.com.br/v2/";
 
     $this->URLs = [
+      'session'                   => "{$baseURL}/sessions",
       'checkout.javascript'       => "https://stc.{$sandbox}pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js",
-      'checkout.session'          => "{$baseURL}/checkout/sessions",
-      'transaction'               => "{$baseURL}/transactions/",
-      'transaction.cancel'        => "{$baseURL}/transactions/cancels/",
-      'transaction.refunds'       => "{$baseURL}/transactions/refunds/",
-      'transaction.notification'  => "{$baseURL}/transactions/notifications/",
+      'transaction'               => "{$baseURL}transactions/",
+      'transaction.cancel'        => "{$baseURL}transactions/cancels/",
+      'transaction.refunds'       => "{$baseURL}transactions/refunds/",
+      'transaction.notification'  => "{$baseURL}transactions/notifications/",
       'transaction.sandbox'       => "https://sandbox.api.pagseguro.com/digital-payments/v1/transactions/:transactionCode/status"
     ];
   }
