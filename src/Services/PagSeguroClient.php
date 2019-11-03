@@ -40,7 +40,7 @@ class PagSeguroClient extends PagSeguroConfiguracoes
    * Resultado da requisição
    * @var SimpleXMLElement
    */
-  private $result;
+  protected $result;
 
   /**
    * Envia uma requisição para o PagSeguro
@@ -54,7 +54,7 @@ class PagSeguroClient extends PagSeguroConfiguracoes
 
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $this->url);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, self::$header);
 
     if ($this->method == 'POST') {
       curl_setopt($curl, CURLOPT_POST, true);
