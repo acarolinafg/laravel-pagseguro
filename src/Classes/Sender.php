@@ -9,37 +9,45 @@ use Acarolinafg\PagSeguro\Rules\DocumentRule;
  *
  * @author Ana Carolina Fidelis Gonçalves <acarolinafg@gmail.com>
  */
-class Sender implements DataInterface
+class Sender extends CommonData
 {
+
   /**
    * Identificador do comprador gerado pelo Java Script do PagSeguro
    * @var string
    */
-  private $hash;
+  protected $hash;
 
   /**
    * Nome completo do comprador
    * @var string
    */
-  private $name;
+  protected $name;
 
   /**
    * Especifica o e-mail do comprador que está realizando o pagamento
    * @var string
    */
-  private $email;
+  protected $email;
 
   /**
    * Dados do telefone do comprador
    * @var array
    */
-  private $phone = ['areaCode' => '', 'number' => ''];
+  protected $phone = ['areaCode' => '', 'number' => ''];
 
   /**
    * Dados de documentos do comprador
    * @var array
    */
-  private $document = ['type' => '', 'value' => ''];
+  protected $document = ['type' => '', 'value' => ''];
+
+  public function __construct(array $data)
+  {
+    $this->alias = 'sender';
+    $this->attributes = ['hash', 'name', 'email', 'phone', 'document'];
+    parent::__construct($data);
+  }
 
   /**
    * Retorna a chave do comprador
@@ -105,15 +113,6 @@ class Sender implements DataInterface
   }
 
   /**
-   * Retorna o array do telefone
-   * @return array
-   */
-  public function getPhoneArray()
-  {
-    return $this->phone;
-  }
-
-  /**
    * Armazena o telefone
    * @param string $phone
    */
@@ -134,15 +133,6 @@ class Sender implements DataInterface
   }
 
   /**
-   * Retorna o array documento
-   * @var array
-   */
-  public function getDocumentArray()
-  {
-    return $this->document;
-  }
-
-  /**
    * Armazena o documento
    * @param string $document
    */
@@ -153,37 +143,33 @@ class Sender implements DataInterface
     $this->document['value'] = $value;
   }
 
-  /**
-   * Retorna o objeto como array
-   * @return array
-   */
-  public function toArray()
+  public function rules(): array
   {
     return [
-      'hash'     => $this->hash,
-      'name'     => $this->name,
-      'email'    => $this->email,
-      'areaCode' => $this->phone['areaCode'],
-      'number'   => $this->phone['number'],
-      'type'     => $this->document['type'],
-      'value'    => $this->document['value'],
+      'hash'      => 'required',
+      'name'      => 'required|max:50',
+      'email'     => 'required|email|max:60',
+      'phone'     => 'required|digits_between:10,11',
+      'document'  => ['required', new DocumentRule($this->getDocument())],
     ];
   }
 
-  /**
-   * Regras de validação do comprador
-   * @array
-   */
-  public function rules()
+  public function toArray(bool $useAlias = false): array
   {
-    return [
-      'hash'     => 'required',
-      'name'     => 'required|max:50',
-      'email'    => 'required|email|max:60',
-      'areaCode' => 'required|digits:2',
-      'number'   => 'required|digits_between:8,9',
-      'type'     => 'required',
-      'value'    => ['required', new DocumentRule($this->document['value'])],
-    ];
+    $array = parent::toArray($useAlias);
+
+    if ($useAlias) {
+      unset($array['senderDocument']);
+      $type = $this->document['type'];
+      $array["{$this->alias}{$type}"] = $this->getDocument();
+
+      unset($array['senderPhone']);
+      $array['senderAreaCode'] = $this->phone['areaCode'];
+      $array['senderPhone'] = $this->phone['number'];
+    } else {
+      $array['document'] = $this->getDocument();
+      $array['phone'] = $this->getPhone();
+     }
+    return $array;
   }
 }
