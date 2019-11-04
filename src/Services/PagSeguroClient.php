@@ -135,4 +135,21 @@ class PagSeguroClient extends PagSeguroConfiguracoes
       throw new PagSeguroException($result->error->message, (int) $result->error->code);
     }
   }
+
+  /**
+   * Validação dos dados
+   * @param $data
+   * @param $rules
+   * @throws Acarolinafg\PagSeguro\PagSeguroException
+   */
+  protected function validate(array $data, array $rules)
+  {
+    $data = array_filter($data);
+
+    $validator = $this->validator->make($data, $rules);
+
+    if ($validator->fails()) {
+      throw new PagSeguroException($validator->messages()->first(), 1003);
+    }
+  }
 }
