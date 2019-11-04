@@ -2,6 +2,8 @@
 
 namespace Acarolinafg\PagSeguro\Classes;
 
+use Acarolinafg\PagSeguro\Rules\DocumentRule;
+
 /**
  * Classe Sender (Comprador)
  *
@@ -38,12 +40,6 @@ class Sender
    * @var array
    */
   private $document = ['type' => '', 'value' => ''];
-
-  /**
-   * Data de nascimento do comprador no formato dd/mm/yyyy
-   * @var string
-   */
-  private $dateBirth;
 
   /**
    * Retorna a chave do comprador
@@ -158,20 +154,36 @@ class Sender
   }
 
   /**
-   * Retorna a data de nascimento no formato dd/mm/yyyy
-   * @var string
+   * Retorna o objeto como array
+   * @return array
    */
-  public function getDateBirth()
+  public function toArray()
   {
-    return $this->dateBirth;
+    return [
+      'hash'     => $this->hash,
+      'name'     => $this->name,
+      'email'    => $this->email,
+      'areaCode' => $this->phone['areaCode'],
+      'number'   => $this->phone['number'],
+      'type'     => $this->document['type'],
+      'value'    => $this->document['value'],
+    ];
   }
 
   /**
-   * Armazena a data de nascimento
-   * @param string $document
+   * Regras de validação do comprador
+   * @array
    */
-  public function setDateBirth($dateBirth)
+  public function rules()
   {
-    $this->dateBirth = pagseguro_dateBR($dateBirth);
+    return [
+      'hash'     => 'required',
+      'name'     => 'required|max:50',
+      'email'    => 'required|email|max:60',
+      'areaCode' => 'required|digits:2',
+      'number'   => 'required|digits_between:8,9',
+      'type'     => 'required',
+      'value'    => ['required', new DocumentRule($this->document['value'])],
+    ];
   }
 }
