@@ -9,7 +9,7 @@ use Acarolinafg\PagSeguro\Rules\DocumentRule;
  *
  * @author Ana Carolina Fidelis Gonçalves <acarolinafg@gmail.com>
  */
-class Sender
+class Sender implements DataInterface
 {
   /**
    * Identificador do comprador gerado pelo Java Script do PagSeguro
