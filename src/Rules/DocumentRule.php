@@ -8,7 +8,7 @@ use Illuminate\Contracts\Validation\Rule;
  * Regra de validação do CPF e do CNPJ
  * @author Ana Carolina Fidelis Gonçalves <acarolinafg@gmail.com>
  */
-class DocumentRule extends Rule
+class DocumentRule implements Rule
 {
   /**
    * Número do documento
@@ -21,7 +21,7 @@ class DocumentRule extends Rule
    *
    * @return void
    */
-  public function __construct(string $document)
+  public function __construct($document)
   {
     $this->document = $document;
   }

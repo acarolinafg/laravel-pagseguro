@@ -149,7 +149,12 @@ class PagSeguroClient extends PagSeguroConfiguracoes
     $validator = $this->validator->make($data, $rules);
 
     if ($validator->fails()) {
-      throw new PagSeguroException($validator->messages()->first(), 1003);
+      $messages = '';
+      foreach ($validator->messages()->all() as $value){
+        $messages.= "1003 - {$value}|";
+      }
+      $messages = substr($messages,0, strlen($messages) - 1);
+      throw new PagSeguroException($messages, 1003);
     }
   }
 }
