@@ -47,6 +47,24 @@ if (!function_exists('pagseguro_clear_number')) {
    */
   function pagseguro_clear_number($value)
   {
-   return pagseguro_clear_value($value,'/\D/', '');
+    return pagseguro_clear_value($value, '/\D/', '');
+  }
+}
+
+if (!function_exists('pagseguro_dateBR')) {
+
+  /**
+   * Coloca uma data no padrão DIA/MÊS/ANO
+   * @param mixed $value
+   * @return null|mixed
+   */
+  function pagseguro_dateBR($value)
+  {
+    $value = pagseguro_clear_value($value);
+    $array = explode('-', $value);
+    if (sizeof($array) == 3) {
+      return $array[3] . "/" . $array[2] . "/" . $array[1];
+    }
+    return $value;
   }
 }
