@@ -2,7 +2,7 @@
 
 namespace Acarolinafg\PagSeguro\Services;
 
-use Acarolinafg\PagSeguro\Classes\Shopping;
+use Acarolinafg\PagSeguro\Classes\Sender;
 
 /**
  * Classe de Checkout Transparente do PagSeguro
@@ -10,7 +10,28 @@ use Acarolinafg\PagSeguro\Classes\Shopping;
  */
 class PagSeguroCheckoutTransparente extends PagSeguroClient
 {
-  use Shopping; //Dados da compra
+  /**
+   * Comprador
+   * @var Sender
+   */
+  private $sender = [];
+
+
+  /**
+   * Armazena o comprador da transação
+   * @param array $data
+   */
+  public function setSender(array $data)
+  {
+    $this->sender = new Sender;
+    $this->sender->setHash($data['hash']);
+    $this->sender->setName($data['name']);
+    $this->sender->setEmail($data['email']);
+    $this->sender->setPhone($data['phone']);
+    $this->sender->setDocument($data['document']);
+
+    $this->validate($this->sender->toArray(), $this->sender->rules());
+  }
 
   /**
    * Cancelar transação
