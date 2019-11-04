@@ -7,31 +7,50 @@ namespace Acarolinafg\PagSeguro\Classes;
  *
  * @author Ana Carolina Fidelis Gonçalves <acarolinafg@gmail.com>
  */
-class Item implements DataInterface
+class Item extends CommonData
 {
   /**
    * Identificadores dos itens
    * @var string
    */
-  private $id;
+  protected $id;
 
   /**
    * Descrições dos itens
    * @var string
    */
-  private $description;
+  protected $description;
 
   /**
    * Valores unitários dos itens
    * @var float
    */
-  private $amount;
+  protected $amount;
 
   /**
    * Quantidades dos itens
    * @var int
    */
-  private $quantity;
+  protected $quantity;
+
+  /**
+   * Identificador no array de itens
+   * @var int
+   */
+  private $keyCollection;
+
+  public function __construct(array $data, int $keyCollection = 1)
+  {
+    $this->alias = 'item';
+    $this->keyCollection = $keyCollection;
+    $this->attributes = [
+      "id",
+      "description",
+      "amount",
+      "quantity"
+    ];
+    parent::__construct($data);
+  }
 
   /**
    * Obter o identificador
@@ -106,30 +125,30 @@ class Item implements DataInterface
   }
 
   /**
-   * Retorna o objeto como array
-   * @return array
-   */
-  public function toArray()
-  {
-    return [
-      'id'            => $this->id,
-      'description'   => $this->description,
-      'amount'        => $this->amount,
-      'quantity'      => $this->quantity
-    ];
-  }
-
-  /**
    * Regras de validação do item
    * @array
    */
-  public function rules()
+  public function rules(): array
   {
     return [
-      'id'            => 'required|max:100',
-      'description'   => 'required|max:100',
-      'amount'        => 'required|numeric|between:0.00,9999999.00',
-      'quantity'      => 'required|integer|between:1,999'
+      "id"            => 'required|max:100',
+      "description"   => 'required|max:100',
+      "amount"        => 'required|numeric|between:0.00,9999999.00',
+      "quantity"      => 'required|integer|between:1,999'
     ];
+  }
+
+  public function toArray(bool $useAlias = false): array
+  {
+    $array = parent::toArray($useAlias);
+
+    if ($useAlias) {
+      $new_array = [];
+      foreach ($array as $key => $value) {
+        $new_array["$key{$this->keyCollection}"] = $value;
+      }
+      return $new_array;
+    }
+    return $array;
   }
 }
