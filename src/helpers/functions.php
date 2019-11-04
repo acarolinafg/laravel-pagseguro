@@ -17,13 +17,17 @@ if (!function_exists('pagseguro_str_parameters')) {
 
 if (!function_exists('pagseguro_format_money')) {
   /**
-   * Formata um valor deixando no padrão de moeda
+   * Formata um valor deixando no padrão de moeda com dois pontos
    * @param mixed $value
-   * @return null|number
+   * @return null|float
    */
   function pagseguro_format_money($value)
   {
-    return $value == null ? null : number_format($value, 2, '.', '');
+    if ($value) {
+      $value = str_replace('.', '', $value);
+      return (float) str_replace(',', '.', $value);
+    }
+    return $value;
   }
 }
 
