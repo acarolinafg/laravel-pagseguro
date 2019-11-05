@@ -2,7 +2,6 @@
 
 namespace Acarolinafg\PagSeguro\Services;
 
-use Acarolinafg\PagSeguro\Classes\DataInterface;
 use Acarolinafg\PagSeguro\Exceptions\PagSeguroException;
 use \SimpleXMLElement;
 
@@ -139,12 +138,15 @@ class PagSeguroClient extends PagSeguroConfiguracoes
 
   /**
    * Validação dos dados
-   * @param DataInterface $object
+   * @param $data
+   * @param $rules
    * @throws Acarolinafg\PagSeguro\PagSeguroException
    */
-  protected function validate(DataInterface $object)
+  protected function validate(array $data, array $rules)
   {
-    $validator = $this->validator->make($object->toArray(), $object->rules());
+    $data = array_filter($data);
+
+    $validator = $this->validator->make($data, $rules);
 
     if ($validator->fails()) {
       $messages = '';
