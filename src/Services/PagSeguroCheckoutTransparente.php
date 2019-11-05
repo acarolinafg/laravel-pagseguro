@@ -3,7 +3,7 @@
 namespace Acarolinafg\PagSeguro\Services;
 
 use Acarolinafg\PagSeguro\Classes\BillingAddress;
-use Acarolinafg\PagSeguro\Exceptions\PagSeguroException;
+use Acarolinafg\PagSeguro\Classes\CreditCardHolder;
 use Acarolinafg\PagSeguro\Classes\Sender;
 use Acarolinafg\PagSeguro\Classes\Item;
 use Acarolinafg\PagSeguro\Classes\Shipping;
@@ -50,7 +50,11 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
    */
   private $billingAddress;
 
-
+  /**
+   * Cartão de crédito e titular
+   * @var CreditCardHolder
+   */
+  private $creditCard;
 
   /**
    * Regras de validação para atributos
@@ -130,6 +134,22 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
     $this->shipping->setComplement($data['complement']);
     $this->shipping->setCost($data['cost']);
     $this->validate($this->shipping->toArray(), $this->shipping->rules());
+    return $this;
+  }
+
+   /**
+   * Armazena o cartão de crédito
+   * @param array $data
+   */
+  public function setcreditCard(array $data)
+  {
+    $this->creditCard = new CreditCardHolder($data);
+    $this->creditCard->setToken($data['token']);
+    $this->creditCard->setName($data['name']);
+    $this->creditCard->setCPF($data['CPF']);
+    $this->creditCard->setPhone($data['phone']);
+    $this->creditCard->setBirthDate($data['birthDate']);
+    $this->validate($this->creditCard->toArray(), $this->creditCard->rules());
     return $this;
   }
 
