@@ -151,4 +151,13 @@ class BillingAddress extends CommonData
       'complement' => 'required|max:40'
     ];
   }
+
+  public function toArray(bool $useAlias = false): array
+  {
+    $array = parent::toArray($useAlias);
+    if ($useAlias) {
+      $array['shippingAddressCountry'] = $this->getCountry();
+    }
+    return $array;
+  }
 }

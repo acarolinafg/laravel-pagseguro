@@ -172,11 +172,11 @@ class Shipping extends CommonData
   public function toArray(bool $useAlias = false): array
   {
     if ($useAlias) {
-
       $array['shippingAddressStreet'] = $this->getStreet();
       $array['shippingAddressNumber'] = $this->getNumber();
       $array['shippingAddressDistrict'] = $this->getDistrict();
       $array['shippingAddressCity'] = $this->getCity();
+      $array['shippingAddressCountry'] = $this->getCountry();
       $array['shippingAddressPostalCode'] = $this->getPostalCode();
       if($this->getComplement())
         $array['shippingAddressComplement'] = $this->getComplement();
