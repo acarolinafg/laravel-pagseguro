@@ -23,16 +23,11 @@ if (!function_exists('pagseguro_format_money')) {
    */
   function pagseguro_format_money($value)
   {
-    if ($value) {
-      if (is_float((float) $value)) {
-        $value =  (float) $value;
-      } else {
-        $value = str_replace('.', '', $value);
-        $value = (float) str_replace(',', '.', $value);
-      }
-      return number_format($value, 2, '.', '');
+    if ($value){
+      $value = str_replace(',', '.', $value);
+      return  number_format($value, 2, '.', '');
     }
-    return null;
+    return $value;
   }
 }
 

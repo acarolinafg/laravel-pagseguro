@@ -57,12 +57,34 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
   private $creditCard;
 
   /**
+   * Mode de pagamento
+   * @var string
+   */
+  private $paymentMode = 'default';
+
+  /**
+   * Método de pagamento
+   * @example creditCard
+   * @example boleto
+   * @example eft
+   * @var string
+   */
+  private $paymentMethod = 'creditCard';
+
+  /**
+   * Valor de desconto
+   * @var float
+   */
+  private $discount;
+
+  /**
    * Regras de validação para atributos
    * @var array
    */
   private $rules = [
     'reference' => 'nullable|max:200',
-    'receiverEmail' => 'nullable|email|max:60'
+    'receiverEmail' => 'nullable|email|max:60',
+
   ];
 
   /**
@@ -72,6 +94,27 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
   public function setReference($reference)
   {
     $this->reference = pagseguro_clear_value($reference);
+  }
+
+  /**
+   * Define o método de pagamento
+   * @param string $paymentMethod
+   */
+  public function setPaymentMethod($paymentMethod = 'creditCard')
+  {
+    $this->paymentMethod = $paymentMethod;
+  }
+
+  /**
+   * Armazena o valor de desconto
+   * @param mixed $discount
+   */
+  public function setDiscount($discount)
+  {
+    $discount = pagseguro_format_money($discount);
+    $rules = ['discount' => 'nullable|between:0.00,9999999.00'];
+    $this->validate(['discount' => $discount], $rules);
+    $this->discount = -1 * $discount;
   }
 
   /**
@@ -137,7 +180,7 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
     return $this;
   }
 
-   /**
+  /**
    * Armazena o cartão de crédito
    * @param array $data
    */
