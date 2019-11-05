@@ -72,7 +72,7 @@ if (!function_exists('pagseguro_dateBR')) {
     $value = pagseguro_clear_value($value);
     $array = explode('-', $value);
     if (sizeof($array) == 3) {
-      return $array[3] . "/" . $array[2] . "/" . $array[1];
+      return $array[2] . "/" . $array[1] . "/" . $array[0];
     }
     return $value;
   }
