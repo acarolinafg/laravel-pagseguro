@@ -4,6 +4,7 @@ namespace Acarolinafg\PagSeguro\Services;
 
 use Acarolinafg\PagSeguro\Classes\BillingAddress;
 use Acarolinafg\PagSeguro\Classes\CreditCardHolder;
+use Acarolinafg\PagSeguro\Classes\Installment;
 use Acarolinafg\PagSeguro\Classes\Sender;
 use Acarolinafg\PagSeguro\Classes\Item;
 use Acarolinafg\PagSeguro\Classes\Shipping;
@@ -63,6 +64,12 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
   private $paymentMode = 'default';
 
   /**
+   * Moeda utilizada. Opção única de moeda até o momento BRL(Real).
+   * @var string
+   */
+  private $currency = 'BRL';
+
+  /**
    * Método de pagamento
    * @example creditCard
    * @example boleto
@@ -72,29 +79,17 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
   private $paymentMethod = 'creditCard';
 
   /**
-   * Valor de desconto
+   * Especifica um valor extra que deve ser adicionado ou subtraído ao valor
+   * total do pagamento (Desconto ou Taxa Extra).
    * @var float
    */
-  private $discount;
+  private $extraAmount;
 
   /**
-   * Regras de validação para atributos
-   * @var array
+   * Informações do parcelamento no caso do cartão de crédito
+   * @var Installment
    */
-  private $rules = [
-    'reference' => 'nullable|max:200',
-    'receiverEmail' => 'nullable|email|max:60',
-
-  ];
-
-  /**
-   * Armazena o código de referência
-   * @param string $reference
-   */
-  public function setReference($reference)
-  {
-    $this->reference = pagseguro_clear_value($reference);
-  }
+  private $installment;
 
   /**
    * Define o método de pagamento
@@ -103,6 +98,19 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
   public function setPaymentMethod($paymentMethod = 'creditCard')
   {
     $this->paymentMethod = $paymentMethod;
+    return $this;
+  }
+
+  /**
+   * Armazena email do vendedor
+   * @param string $receiverEmail
+   */
+  public function setReceiverEmail($receiverEmail)
+  {
+    $receiverEmail =  pagseguro_clear_value($receiverEmail);
+    $this->validate(['receiverEmail' => $receiverEmail], ['receiverEmail' => 'nullable|email|max:60']);
+    $this->receiverEmail = $this->sandbox ? 'vendedor@sandbox.pagseguro.com.br' : $receiverEmail;
+    return $this;
   }
 
   /**
@@ -114,33 +122,20 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
     $discount = pagseguro_format_money($discount);
     $rules = ['discount' => 'nullable|between:0.00,9999999.00'];
     $this->validate(['discount' => $discount], $rules);
-    $this->discount = -1 * $discount;
+    $this->extraAmount = -1 * $discount;
+    return $this;
   }
 
   /**
-   * Armazena email do vendedor
-   * @param string $receiverEmail
+   * Armazena o valor de uma taxa extra ao pagamento
+   * @param mixed $rate
    */
-  public function setReceiverEmail($receiverEmail)
+  public function setRate($rate)
   {
-    $this->receiverEmail = $this->sandbox ? 'vendedor@sandbox.pagseguro.com.br' : pagseguro_clear_value($receiverEmail);
-  }
-
-  /**
-   * Armazena o comprador da transação
-   * @param array $data
-   */
-  public function setSender(array $data)
-  {
-    $this->sender = new Sender($data);
-    $this->sender->setHash($data['hash']);
-    $this->sender->setName($data['name']);
-    $email = $this->sandbox ? 'comprador@sandbox.pagseguro.com.br' : pagseguro_clear_value($data['email']);
-    $this->sender->setEmail($email);
-    $this->sender->setPhone($data['phone']);
-    $this->sender->setDocument($data['document']);
-    $this->validate($this->sender->toArray(), $this->sender->rules());
-
+    $rate = pagseguro_format_money($rate);
+    $rules = ['rate' => 'nullable|between:0.00,9999999.00'];
+    $this->validate(['rate' => $rate], $rules);
+    $this->extraAmount = $rate;
     return $this;
   }
 
@@ -158,6 +153,35 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
     $item->setQuantity($data['quantity']);
     $this->validate($item->toArray(), $item->rules());
     $this->itens[] = $item;
+    return $this;
+  }
+
+  /**
+   * Armazena o código de referência
+   * @param string $reference
+   */
+  public function setReference($reference)
+  {
+    $reference =  pagseguro_clear_value($reference);
+    $this->validate(['reference' => $reference], ['reference' => 'nullable|max:200']);
+    $this->reference = $reference;
+    return $this;
+  }
+
+  /**
+   * Armazena o comprador da transação
+   * @param array $data
+   */
+  public function setSender(array $data)
+  {
+    $this->sender = new Sender($data);
+    $this->sender->setHash($data['hash']);
+    $this->sender->setName($data['name']);
+    $email = $this->sandbox ? 'comprador@sandbox.pagseguro.com.br' : pagseguro_clear_value($data['email']);
+    $this->sender->setEmail($email);
+    $this->sender->setPhone($data['phone']);
+    $this->sender->setDocument($data['document']);
+    $this->validate($this->sender->toArray(), $this->sender->rules());
     return $this;
   }
 
@@ -212,6 +236,21 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
     $this->billingAddress->setPostalCode($data['postalCode']);
     $this->billingAddress->setComplement($data['complement']);
     $this->validate($this->billingAddress->toArray(), $this->billingAddress->rules());
+    return $this;
+  }
+
+  public function setInstallment(array $data)
+  {
+    $this->installment = new Installment($data);
+    $this->installment->setQuantity($data['quantity']);
+    $this->installment->setValue($data['value']);
+
+    if (isset($data['noInterestInstallmentQuantity']))
+      $this->installment->setNoInterestInstallmentQuantity($data['noInterestInstallmentQuantity']);
+    else
+      $this->installment->setNoInterestInstallmentQuantity(0);
+
+    $this->validate($this->installment->toArray(), $this->installment->rules());
     return $this;
   }
 
