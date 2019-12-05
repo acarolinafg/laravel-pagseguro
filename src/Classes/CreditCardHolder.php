@@ -138,7 +138,7 @@ class CreditCardHolder extends CommonData
     return [
       'token'     => 'required',
       'name'      => 'required|min:1|max:50',
-      //'phone'     => 'required|digits_between:10,11',
+      'phone'     => 'required|digits_between:10,11',
       'CPF'       => ['required', new DocumentRule($this->getCPF())],
       'birthDate' => 'required|date_format:d/m/Y'
     ];
@@ -147,7 +147,7 @@ class CreditCardHolder extends CommonData
   public function toArray(bool $useAlias = false): array
   {
     if ($useAlias) {
-      $array['creditCardToken'] = $this->getStreet();
+      $array['creditCardToken'] = $this->getToken();
       $array['creditCardHolderName'] = $this->getName();
       $array['creditCardHolderCPF'] = $this->getCPF();
       $array['creditCardHolderBirthDate'] = $this->getBirthDate();
