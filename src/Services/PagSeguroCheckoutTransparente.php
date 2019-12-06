@@ -8,6 +8,7 @@ use Acarolinafg\PagSeguro\Classes\Installment;
 use Acarolinafg\PagSeguro\Classes\Sender;
 use Acarolinafg\PagSeguro\Classes\Item;
 use Acarolinafg\PagSeguro\Classes\Shipping;
+use Acarolinafg\PagSeguro\Exceptions\PagSeguroException;
 
 /**
  * Classe de Checkout Transparente do PagSeguro
@@ -83,7 +84,7 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
    * total do pagamento (Desconto ou Taxa Extra).
    * @var float
    */
-  private $extraAmount;
+  private $extraAmount = '0.00';
 
   /**
    * Informações do parcelamento no caso do cartão de crédito
@@ -198,7 +199,9 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
     $this->shipping->setCity($data['city']);
     $this->shipping->setState($data['state']);
     $this->shipping->setPostalCode($data['postalCode']);
-    $this->shipping->setComplement($data['complement']);
+    if (isset($data['complement']))
+      $this->shipping->setComplement($data['complement']);
+    $this->shipping->setType($data['type']);
     $this->shipping->setCost($data['cost']);
     $this->validate($this->shipping->toArray(), $this->shipping->rules());
     return $this;
@@ -208,7 +211,7 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
    * Armazena o cartão de crédito
    * @param array $data
    */
-  public function setcreditCard(array $data)
+  public function setCreditCard(array $data)
   {
     $this->creditCard = new CreditCardHolder($data);
     $this->creditCard->setToken($data['token']);
@@ -247,8 +250,6 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
 
     if (isset($data['noInterestInstallmentQuantity']))
       $this->installment->setNoInterestInstallmentQuantity($data['noInterestInstallmentQuantity']);
-    else
-      $this->installment->setNoInterestInstallmentQuantity(0);
 
     $this->validate($this->installment->toArray(), $this->installment->rules());
     return $this;
@@ -256,6 +257,77 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
 
   public function send()
   {
+    //dados para o envio da transação
+    $params = [
+      'email'           => $this->email,
+      'token'           => $this->token,
+      'paymentMode'     => $this->paymentMode,
+      'paymentMethod'   => $this->paymentMethod,
+      'currency'        => $this->currency,
+      'extraAmount'     => $this->extraAmount,
+    ];
+
+    //dados do vendedor
+    if (!empty($this->receiverEmail))
+      $params['receiverEmail'] = $this->receiverEmail;
+
+    //url para envio de notificações
+    if (!empty($this->notificationURL))
+      $params['notificationURL'] = $this->notificationURL;
+
+    //código de referência
+    if (!empty($this->reference))
+      $params['reference'] = $this->reference;
+
+    //itens de cobrança
+    if ($this->itens) {
+      foreach ($this->itens as $item) {
+        $params = array_merge($params, $item->toArray(true));
+      }
+    } else {
+      throw new PagSeguroException("Falta o(s) itens. Utilize o método addItem(array \$data)");
+    }
+
+    //dados do comprador
+    if ($this->sender) {
+      $params = array_merge($params, $this->sender->toArray(true));
+    } else {
+      throw new PagSeguroException("Falta os dados do comprador. Utilize o método setSender(array \$data)");
+    }
+
+    //dados do frete
+    if ($this->shipping) {
+      $params = array_merge($params, $this->shipping->toArray(true));
+    } else {
+      $params['shippingAddressRequired'] = 'false';
+    }
+
+    //dados de cobrança do método de cartão de crédito
+    if ($this->paymentMethod === 'creditCard') {
+      //dados do cartão de crédito
+      if ($this->creditCard) {
+        $params = array_merge($params, $this->creditCard->toArray(true));
+      } else {
+        throw new PagSeguroException("Falta os dados do cartão de crédito. Utilize o método setCreditCard(array \$data)");
+      }
+
+      //dados de parcelamento
+      if ($this->installment) {
+        $params = array_merge($params, $this->installment->toArray(true));
+      } else {
+        throw new PagSeguroException("Falta os dados do parcelamento. Utilize o método setInstallment(array \$data)");
+      }
+
+      //endereço de cobrança
+      if ($this->billingAddress) {
+        $params = array_merge($params, $this->billingAddress->toArray(true));
+      } else {
+        throw new PagSeguroException("Falta o endereço de cobrança. Utilize o método setBillingAddress(array \$data)");
+      }
+    }
+
+
+
     return $this;
   }
 
