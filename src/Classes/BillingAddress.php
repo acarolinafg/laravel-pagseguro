@@ -156,7 +156,7 @@ class BillingAddress extends CommonData
   {
     $array = parent::toArray($useAlias);
     if ($useAlias) {
-      $array['shippingAddressCountry'] = $this->getCountry();
+      $array['billingAddressCountry'] = $this->getCountry();
     }
     return $array;
   }

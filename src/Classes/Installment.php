@@ -14,19 +14,19 @@ class Installment extends CommonData
    * Quantidade de parcelas
    * @var int
    */
-  private $quantity;
+  protected $quantity;
 
   /**
    * Valor das parcelas obtidas
    * @var float
    */
-  private $value;
+  protected $value;
 
   /**
    * Quantidade de parcelas sem juros oferecida
    * @var int
    */
-  private $noInterestInstallmentQuantity;
+  protected $noInterestInstallmentQuantity;
 
 
   public function __construct(array $data)
