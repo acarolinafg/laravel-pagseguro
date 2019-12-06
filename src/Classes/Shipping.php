@@ -63,10 +63,19 @@ class Shipping extends CommonData
    */
   protected $cost;
 
+  /**
+   * Tipo do frete
+   * @var int
+   * @example 1 - Encomenda normal (PAC)
+   * @example 2 - SEDEX
+   * @example 3 - Tipo não específicado
+   */
+  protected $type;
+
   public function __construct(array $data)
   {
-    $this->alias = 'shipping';
-    $this->attributes = ['street', 'number', 'district', 'city', 'state', 'postalCode', 'complement', 'cost'];
+    $this->alias = 'shippingAddress';
+    $this->attributes = ['street', 'number', 'district', 'city', 'state', 'postalCode', 'type', 'cost'];
     parent::__construct($data);
   }
 
@@ -155,6 +164,16 @@ class Shipping extends CommonData
     $this->cost = pagseguro_format_money($cost);
   }
 
+  public function getType()
+  {
+    return $this->type;
+  }
+
+  public function setType($type)
+  {
+    $this->type = pagseguro_clear_number($type);
+  }
+
   public function rules(): array
   {
     return [
@@ -165,26 +184,28 @@ class Shipping extends CommonData
       'state'      => 'required|min:2|max:2',
       'postalCode' => 'required|digits:8',
       'complement' => 'nullable|max:40',
+      'type'       => 'required|integer|between:1,3',
       'cost'       => 'required|between:0.00,9999999.00'
     ];
   }
 
   public function toArray(bool $useAlias = false): array
   {
+    $array = parent::toArray($useAlias);
     if ($useAlias) {
-      $array['shippingAddressStreet'] = $this->getStreet();
-      $array['shippingAddressNumber'] = $this->getNumber();
-      $array['shippingAddressDistrict'] = $this->getDistrict();
-      $array['shippingAddressCity'] = $this->getCity();
-      $array['shippingAddressCountry'] = $this->getCountry();
-      $array['shippingAddressPostalCode'] = $this->getPostalCode();
-      if($this->getComplement())
+      $array = array_merge(['shippingAddressRequired' => 'true'], $array);
+
+      if (!empty($this->getComplement()))
         $array['shippingAddressComplement'] = $this->getComplement();
 
+      unset($array['shippingAddressCost']);
+      unset($array['shippingAddressType']);
+
+      $array['shippingAddressCountry'] = $this->getCountry();
+      $array['shippingType'] = $this->getType();
       $array['shippingCost'] = $this->getCost();
       return $array;
-    } else {
-      return parent::toArray();
     }
+    return $array;
   }
 }
