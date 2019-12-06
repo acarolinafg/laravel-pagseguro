@@ -326,9 +326,16 @@ class PagSeguroCheckoutTransparente extends PagSeguroClient
       }
     }
 
+    //tranforma os dados da transação em string
+    $this->parameters = pagseguro_str_parameters($params);
 
+    //definição da url
+    $this->url = $this->getUrl('transaction');
 
-    return $this;
+    //enviar requisição
+    $this->sendRequest();
+
+    return $this->result;
   }
 
   /**

@@ -32,7 +32,7 @@ class Installment extends CommonData
   public function __construct(array $data)
   {
     $this->alias = 'installment';
-    $this->attributes = ['quantity', 'value', ];
+    $this->attributes = ['quantity', 'value', 'noInterestInstallmentQuantity'];
     parent::__construct($data);
   }
 
@@ -95,7 +95,7 @@ class Installment extends CommonData
     return [
       'quantity'                        => 'required|integer|between:1,18',
       'value'                           => 'required|numeric|between:0.00,9999999.00',
-      'noInterestInstallmentQuantity'   => 'nullable|integer|between:0,18'
+      'noInterestInstallmentQuantity'   => 'required|integer|between:0,18'
     ];
   }
 
@@ -104,7 +104,8 @@ class Installment extends CommonData
     $array = parent::toArray($useAlias);
 
     if ($useAlias) {
-      $array['noInterestInstallmentQuantity'] = empty($this->getNoInterestInstallmentQuantity()) ? '0' : $this->getNoInterestInstallmentQuantity();
+      unset($array['installmentNoInterestInstallmentQuantity']);
+      $array['noInterestInstallmentQuantity'] = $this->getNoInterestInstallmentQuantity();
     }
     return $array;
   }
